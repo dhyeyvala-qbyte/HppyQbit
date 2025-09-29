@@ -1,0 +1,507 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoodFlow - Track Your Journey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            background: #0a0e27;
+            color: #fff;
+        }
+
+        .parallax-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .parallax-bg {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.3s ease-out;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: fadeInUp 1s ease;
+            text-shadow: 2px 2px 20px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            animation: fadeInUp 1.2s ease;
+            opacity: 0.9;
+        }
+
+        .floating-emoji {
+            position: absolute;
+            font-size: 3rem;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.3;
+        }
+
+        .floating-emoji:nth-child(1) { top: 20%; left: 15%; animation-delay: 0s; }
+        .floating-emoji:nth-child(2) { top: 60%; left: 80%; animation-delay: 1s; }
+        .floating-emoji:nth-child(3) { top: 30%; left: 70%; animation-delay: 2s; }
+        .floating-emoji:nth-child(4) { top: 70%; left: 20%; animation-delay: 1.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-30px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mood Check-in Section */
+        .mood-checkin {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .checkin-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 40px;
+            max-width: 900px;
+        }
+
+        .checkin-content h2 {
+            font-size: 3rem;
+            margin-bottom: 40px;
+        }
+
+        .mood-options {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .mood-btn {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: none;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mood-btn:hover {
+            transform: scale(1.2) rotate(10deg);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        /* Visualization Section */
+        .visualization {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .viz-content {
+            position: relative;
+            z-index: 2;
+            padding: 40px;
+            max-width: 1200px;
+            text-align: center;
+        }
+
+        .viz-content h2 {
+            font-size: 3rem;
+            margin-bottom: 40px;
+        }
+
+        .chart-container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 20px;
+        }
+
+        .mood-bars {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 300px;
+            gap: 20px;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, rgba(255,255,255,0.3), rgba(255,255,255,0.8));
+            border-radius: 10px 10px 0 0;
+            position: relative;
+            transition: all 0.5s ease;
+            min-height: 50px;
+        }
+
+        .bar:hover {
+            background: linear-gradient(to top, rgba(255,255,255,0.5), rgba(255,255,255,1));
+            transform: scale(1.05);
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+        }
+
+        /* Journal Section */
+        .journal {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .journal-content {
+            position: relative;
+            z-index: 2;
+            padding: 40px;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .journal-content h2 {
+            font-size: 3rem;
+            margin-bottom: 40px;
+        }
+
+        .journal-box {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        .journal-input {
+            width: 100%;
+            min-height: 200px;
+            background: rgba(255,255,255,0.3);
+            border: none;
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 1.1rem;
+            color: #fff;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .journal-input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .save-btn {
+            margin-top: 20px;
+            padding: 15px 40px;
+            background: rgba(255,255,255,0.3);
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 50px;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .save-btn:hover {
+            background: rgba(255,255,255,0.5);
+            transform: scale(1.05);
+        }
+
+        /* Timeline Section */
+        .timeline {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+        }
+
+        .timeline-content {
+            position: relative;
+            z-index: 2;
+            padding: 40px;
+            max-width: 1400px;
+            text-align: center;
+        }
+
+        .timeline-content h2 {
+            font-size: 3rem;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        .timeline-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 30px;
+            padding: 40px 20px;
+            scroll-behavior: smooth;
+        }
+
+        .timeline-item {
+            min-width: 250px;
+            background: rgba(255,255,255,0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .timeline-emoji {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .timeline-date {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .timeline-note {
+            color: #333;
+            font-size: 1rem;
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 5px;
+            background: linear-gradient(to right, #667eea, #764ba2, #f093fb, #4facfe);
+            transition: width 0.1s ease;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .hero p { font-size: 1.2rem; }
+            .checkin-content h2, .viz-content h2, .journal-content h2, .timeline-content h2 {
+                font-size: 2rem;
+            }
+            .mood-btn { width: 80px; height: 80px; font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+
+    <!-- Hero Section -->
+    <section class="parallax-section hero" id="hero">
+        <div class="floating-emoji">😊</div>
+        <div class="floating-emoji">😔</div>
+        <div class="floating-emoji">😄</div>
+        <div class="floating-emoji">😌</div>
+        <div class="hero-content">
+            <h1>MoodFlow</h1>
+            <p>Track your emotional journey, one day at a time</p>
+        </div>
+    </section>
+
+    <!-- Mood Check-in Section -->
+    <section class="parallax-section mood-checkin">
+        <div class="checkin-content">
+            <h2>How are you feeling today?</h2>
+            <p>Select your current mood</p>
+            <div class="mood-options">
+                <button class="mood-btn" onclick="selectMood('amazing')">😄</button>
+                <button class="mood-btn" onclick="selectMood('good')">😊</button>
+                <button class="mood-btn" onclick="selectMood('okay')">😐</button>
+                <button class="mood-btn" onclick="selectMood('sad')">😔</button>
+                <button class="mood-btn" onclick="selectMood('anxious')">😰</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visualization Section -->
+    <section class="parallax-section visualization">
+        <div class="viz-content">
+            <h2>Your Mood Patterns</h2>
+            <div class="chart-container">
+                <div class="mood-bars">
+                    <div class="bar" style="height: 80%;">
+                        <span class="bar-label">😄</span>
+                    </div>
+                    <div class="bar" style="height: 60%;">
+                        <span class="bar-label">😊</span>
+                    </div>
+                    <div class="bar" style="height: 40%;">
+                        <span class="bar-label">😐</span>
+                    </div>
+                    <div class="bar" style="height: 30%;">
+                        <span class="bar-label">😔</span>
+                    </div>
+                    <div class="bar" style="height: 20%;">
+                        <span class="bar-label">😰</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Journal Section -->
+    <section class="parallax-section journal">
+        <div class="journal-content">
+            <h2>Daily Journal</h2>
+            <p>Reflect on your day and capture your thoughts</p>
+            <div class="journal-box">
+                <textarea class="journal-input" placeholder="What's on your mind today?"></textarea>
+                <button class="save-btn" onclick="saveJournal()">Save Entry</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="parallax-section timeline">
+        <div class="timeline-content">
+            <h2>Your Mood Timeline</h2>
+            <div class="timeline-scroll">
+                <div class="timeline-item">
+                    <div class="timeline-emoji">😄</div>
+                    <div class="timeline-date">Today</div>
+                    <div class="timeline-note">Great day at university!</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-emoji">😊</div>
+                    <div class="timeline-date">Yesterday</div>
+                    <div class="timeline-note">Productive study session</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-emoji">😐</div>
+                    <div class="timeline-date">2 days ago</div>
+                    <div class="timeline-note">Normal day</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-emoji">😊</div>
+                    <div class="timeline-date">3 days ago</div>
+                    <div class="timeline-note">Good progress on project</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-emoji">😔</div>
+                    <div class="timeline-date">4 days ago</div>
+                    <div class="timeline-note">Feeling a bit down</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-emoji">😄</div>
+                    <div class="timeline-date">5 days ago</div>
+                    <div class="timeline-note">Amazing weekend!</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Parallax scroll effect
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const sections = document.querySelectorAll('.parallax-section');
+            
+            sections.forEach(section => {
+                const speed = 0.5;
+                const yPos = -(scrolled * speed);
+                section.style.backgroundPosition = `center ${yPos}px`;
+            });
+
+            // Update scroll indicator
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled_percent = (winScroll / height) * 100;
+            document.getElementById('scrollIndicator').style.width = scrolled_percent + '%';
+        });
+
+        // Mood selection
+        function selectMood(mood) {
+            alert(`Mood "${mood}" selected! This will be sent to your Python backend.`);
+            // TODO: Send to Python backend
+            // fetch('/api/mood', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ mood: mood, timestamp: new Date() })
+            // });
+        }
+
+        // Save journal entry
+        function saveJournal() {
+            const entry = document.querySelector('.journal-input').value;
+            if (entry.trim()) {
+                alert('Journal entry saved! This will be sent to your Python backend.');
+                // TODO: Send to Python backend
+                // fetch('/api/journal', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ entry: entry, timestamp: new Date() })
+                // });
+            }
+        }
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.3,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.parallax-section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
