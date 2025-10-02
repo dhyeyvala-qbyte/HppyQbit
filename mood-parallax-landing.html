@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Monitor - Journey Begins</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            background: #000;
+        }
+
+        .container {
+            height: 2000vh;
+            position: relative;
+        }
+
+        /* Black intro screen */
+        .intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #000;
+            z-index: 1000;
+            transition: opacity 1s ease;
+        }
+
+        .intro-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Main emoji container */
+        .emoji-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            z-index: 100;
+        }
+
+        /* Yellow circle with 3D gradient */
+        .emoji-face {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffed4e, #ffcd00, #e6b800);
+            box-shadow: 
+                0 20px 60px rgba(255, 215, 0, 0.4),
+                inset -10px -10px 30px rgba(0, 0, 0, 0.1),
+                inset 10px 10px 30px rgba(255, 255, 255, 0.3);
+            position: relative;
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        /* Eyes */
+        .eyes {
+            position: absolute;
+            width: 100%;
+            top: 35%;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 25%;
+            opacity: 0;
+        }
+
+        .eye {
+            width: 30px;
+            height: 30px;
+            background: #000;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .eye::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            top: 6px;
+            left: 8px;
+        }
+
+        /* Smile */
+        .smile {
+            position: absolute;
+            width: 120px;
+            height: 60px;
+            border: 6px solid #000;
+            border-top: none;
+            border-radius: 0 0 120px 120px;
+            top: 55%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            box-shadow: inset 0 -3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Split screen sections */
+        .split-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            opacity: 0;
+            z-index: 50;
+        }
+
+        .happy-side {
+            width: 50%;
+            background: #f5f5f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sad-side {
+            width: 50%;
+            background: #0a0a0a;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .happy-particle {
+            background: rgba(255, 215, 0, 0.6);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        }
+
+        .sad-particle {
+            background: rgba(100, 150, 200, 0.4);
+            box-shadow: 0 0 8px rgba(100, 150, 200, 0.6);
+        }
+
+        /* Insight text */
+        .insight {
+            position: absolute;
+            font-size: 18px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .happy-insight {
+            color: #2563eb;
+            top: 20%;
+            left: 10%;
+        }
+
+        .sad-insight {
+            color: #ef4444;
+            top: 30%;
+            right: 10%;
+        }
+
+        /* Emoji variations */
+        .emoji-variant {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 200px;
+            opacity: 0;
+            z-index: 101;
+            filter: drop-shadow(0 10px 30px rgba(255, 215, 0, 0.3));
+        }
+
+        /* Start Journey Button */
+        .journey-button {
+            position: fixed;
+            bottom: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 20px 60px;
+            font-size: 24px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 200;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .journey-button:hover {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Cursor glow effect */
+        .cursor-glow {
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.15), transparent);
+            pointer-events: none;
+            z-index: 1;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="intro-screen"></div>
+    <div class="cursor-glow"></div>
+    
+    <div class="container">
+        <!-- Main emoji -->
+        <div class="emoji-container">
+            <div class="emoji-face">
+                <div class="eyes">
+                    <div class="eye left-eye"></div>
+                    <div class="eye right-eye"></div>
+                </div>
+                <div class="smile"></div>
+            </div>
+        </div>
+
+        <!-- Split screen sections -->
+        <div class="split-container">
+            <div class="happy-side">
+                <div class="insight happy-insight">Joy is a choice</div>
+            </div>
+            <div class="sad-side">
+                <div class="insight sad-insight">Embrace the shadows</div>
+            </div>
+        </div>
+
+        <!-- Emoji variants -->
+        <div class="emoji-variant starry">🤩</div>
+        <div class="emoji-variant party">🥳</div>
+
+        <!-- Button -->
+        <button class="journey-button" onclick="startJourney()">Start Journey</button>
+    </div>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Remove intro screen after 1 second
+        setTimeout(() => {
+            document.querySelector('.intro-screen').classList.add('fade-out');
+        }, 1000);
+
+        // Cursor glow effect
+        const cursorGlow = document.querySelector('.cursor-glow');
+        document.addEventListener('mousemove', (e) => {
+            cursorGlow.style.left = e.clientX + 'px';
+            cursorGlow.style.top = e.clientY + 'px';
+        });
+
+        // Yellow circle appears with breathing
+        gsap.to('.emoji-face', {
+            opacity: 1,
+            scale: 1,
+            duration: 1,
+            ease: 'back.out(1.7)',
+            scrollTrigger: {
+                trigger: '.container',
+                start: 'top top',
+                end: '5% top',
+                scrub: 1
+            }
+        });
+
+        // Breathing animation
+        gsap.to('.emoji-face', {
+            scale: 1.05,
+            duration: 2,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+
+        // Eyes appear
+        gsap.to('.eyes', {
+            opacity: 1,
+            duration: 0.3,
+            scrollTrigger: {
+                trigger: '.container',
+                start: '10% top',
+                end: '15% top',
+                scrub: 1
+            }
+        });
+
+        // Blinking animation
+        setInterval(() => {
+            gsap.to('.eye', {
+                scaleY: 0.1,
+                duration: 0.1,
+                yoyo: true,
+                repeat: 1
+            });
+        }, 3000);
+
+        // Smile appears
+        gsap.to('.smile', {
+            opacity: 1,
+            duration: 0.3,
+            scrollTrigger: {
+                trigger: '.container',
+                start: '20% top',
+                end: '25% top',
+                scrub: 1
+            }
+        });
+
+        // Split screen appears
+        gsap.to('.split-container', {
+            opacity: 1,
+            duration: 0.5,
+            scrollTrigger: {
+                trigger: '.container',
+                start: '30% top',
+                end: '35% top',
+                scrub: 1
+            }
+        });
+
+        // Show insights
+        gsap.to('.insight', {
+            opacity: 1,
+            duration: 0.4,
+            stagger: 0.2,
+            scrollTrigger: {
+                trigger: '.container',
+                start: '40% top',
+                end: '45% top',
+                scrub: 1
+            }
+        });
+
+        // Create particles for happy side
+        function createHappyParticles() {
+            const happySide = document.querySelector('.happy-side');
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle', 'happy-particle');
+                particle.style.width = Math.random() * 8 + 4 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                happySide.appendChild(particle);
+
+                gsap.to(particle, {
+                    y: -100,
+                    x: Math.random() * 50 - 25,
+                    opacity: 0,
+                    duration: Math.random() * 3 + 2,
+                    repeat: -1,
+                    ease: 'sine.inOut'
+                });
+            }
+        }
+
+        // Create particles for sad side
+        function createSadParticles() {
+            const sadSide = document.querySelector('.sad-side');
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle', 'sad-particle');
+                particle.style.width = Math.random() * 6 + 3 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * -20 + '%';
+                sadSide.appendChild(particle);
+
+                gsap.to(particle, {
+                    y: '110vh',
+                    opacity: 0,
+                    duration: Math.random() * 4 + 3,
+                    repeat: -1,
+                    ease: 'sine.in'
+                });
+            }
+        }
+
+        createHappyParticles();
+        createSadParticles();
+
+        // Emoji transformation - starry eyes
+        gsap.to('.emoji-face', {
+            opacity: 0,
+            scale: 0.8,
+            scrollTrigger: {
+                trigger: '.container',
+                start: '55% top',
+                end: '60% top',
+                scrub: 1
+            }
+        });
+
+        gsap.to('.emoji-variant.starry', {
+            opacity: 1,
+            scale: 1,
+            duration: 0.3,
+            scrollTrigger: {
+                trigger: '.container',
+                start: '60% top',
+                end: '65% top',
+                scrub: 1
+            }
+        });
+
+        // Party face
+        gsap.to('.emoji-variant.starry', {
+            opacity: 0,
+            scale: 0.8,
+            scrollTrigger: {
+                trigger: '.container',
+                start: '70% top',
+                end: '72% top',
+                scrub: 1
+            }
+        });
+
+        gsap.to('.emoji-variant.party', {
+            opacity: 1,
+            scale: 1,
+            duration: 0.3,
+            scrollTrigger: {
+                trigger: '.container',
+                start: '72% top',
+                end: '77% top',
+                scrub: 1
+            }
+        });
+
+        // Vanish all emojis
+        gsap.to('.emoji-variant.party', {
+            opacity: 0,
+            scale: 0,
+            scrollTrigger: {
+                trigger: '.container',
+                start: '82% top',
+                end: '85% top',
+                scrub: 1
+            }
+        });
+
+        gsap.to('.split-container', {
+            opacity: 0,
+            scrollTrigger: {
+                trigger: '.container',
+                start: '82% top',
+                end: '85% top',
+                scrub: 1
+            }
+        });
+
+        // Button appears and grows
+        gsap.to('.journey-button', {
+            bottom: '50vh',
+            opacity: 1,
+            scale: 1,
+            duration: 0.5,
+            scrollTrigger: {
+                trigger: '.container',
+                start: '88% top',
+                end: '95% top',
+                scrub: 1
+            }
+        });
+
+        function startJourney() {
+            alert('Next Stage: Voice Assistant (To be implemented)');
+            // This will navigate to your next page
+            // window.location.href = 'voice-assistant.html';
+        }
+    </script>
+</body>
+</html>
