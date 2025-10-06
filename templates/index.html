@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Tracker - Webcam Emotion Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-smile"></i> Mood Tracker</h1>
+            <p>Real-time emotion detection using your webcam</p>
+        </header>
+
+        <main>
+            <div class="camera-section">
+                <div class="camera-container">
+                    <video id="video" autoplay muted></video>
+                    <canvas id="canvas" style="display: none;"></canvas>
+                    <div class="camera-overlay">
+                        <div class="face-frame"></div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="startBtn" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Start Camera
+                    </button>
+                    <button id="captureBtn" class="btn btn-secondary" disabled>
+                        <i class="fas fa-camera"></i> Capture Mood
+                    </button>
+                    <button id="stopBtn" class="btn btn-danger" disabled>
+                        <i class="fas fa-stop"></i> Stop Camera
+                    </button>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <div class="current-mood" id="currentMood">
+                    <h3>Current Mood</h3>
+                    <div class="mood-display">
+                        <div class="emotion-icon" id="emotionIcon">😐</div>
+                        <div class="emotion-text">
+                            <span class="emotion-name" id="emotionName">Neutral</span>
+                            <span class="confidence" id="confidence">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="emotion-breakdown" id="emotionBreakdown" style="display: none;">
+                    <h4>Emotion Breakdown</h4>
+                    <div class="emotion-bars" id="emotionBars"></div>
+                </div>
+            </div>
+
+            <div class="history-section">
+                <h3>Mood History</h3>
+                <div class="history-controls">
+                    <button id="viewHistoryBtn" class="btn btn-outline">
+                        <i class="fas fa-chart-pie"></i> View Chart
+                    </button>
+                    <button id="clearHistoryBtn" class="btn btn-outline">
+                        <i class="fas fa-trash"></i> Clear History
+                    </button>
+                </div>
+                <div class="history-list" id="historyList">
+                    <p class="no-data">No mood data yet. Start tracking your emotions!</p>
+                </div>
+            </div>
+        </main>
+
+        <div class="modal" id="chartModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Mood Distribution Chart</h3>
+                <div id="chartContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
